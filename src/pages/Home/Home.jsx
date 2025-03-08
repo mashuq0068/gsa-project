@@ -6,6 +6,9 @@ import RecentActivity from "@/components/Home/RecentActivity";
 const Home = () => {
   return (
     <>
+     <div>
+    
+     </div>
       <section>
         <Banner />
       </section>

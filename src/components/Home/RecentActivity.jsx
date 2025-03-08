@@ -1,3 +1,5 @@
+import Aos from "aos";
+import { useEffect } from "react";
 
 const RecentActivity = () => {
   const items = [
@@ -26,7 +28,13 @@ const RecentActivity = () => {
         link:"https://www.instagram.com/p/DGlaNKixmX8/",
     },
   ];
-
+ useEffect(() => {
+    Aos.init({
+      duration: 1000, 
+      easing: 'ease-in-out', 
+      
+    });
+  }, []);
   return (
     <div className=" min-h-screen flex flex-col items-center justify-center text-white py-20">
         <h2 className="md:text-5xl text-3xl  font-semibold text-center mb-8">Recent Activities</h2>
@@ -38,6 +46,7 @@ const RecentActivity = () => {
           >
             <a target="_blank" rel="noopener noreferrer" href={item?.link}>
               <img
+              data-aos="zoom-in"
                 src={item.src}
                 alt={item.title}
                 className="w-full  md:max-w-[500px] object-contain rounded-lg mb-6"

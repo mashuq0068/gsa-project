@@ -1,3 +1,4 @@
+import Aos from 'aos';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'; 
 
@@ -23,7 +24,13 @@ const Programs = () => {
     fetchData();
   }, []);
 
-  
+    useEffect(() => {
+      Aos.init({
+        duration: 1000, 
+        easing: 'ease-in-out', 
+        
+      });
+    }, []);
 
   return (
     <div className="bg-gray-900  mx-auto mt-24 text-white p-8">
@@ -32,7 +39,7 @@ const Programs = () => {
         <h2 className="text-3xl lg:text-4xl font-medium mb-12 text-center">Our Programs</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {programs.map(program => (
-            <div key={program?.id} className=" p-6 rounded-lg shadow-md transition">
+            <div data-aos="fade-up" key={program?.id} className=" p-6 rounded-lg shadow-md transition">
               <img src={program?.image} alt={program?.title} className="w-full h-[300px] object-cover  mb-4" />
               <h3 className=" text-orange-400  text-center">{program?.title}</h3>
               <p className=" mt-5 text-sm leading-relaxed text-gray-300 text-center font-light">{program?.shortDescription}</p>

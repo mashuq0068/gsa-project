@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { FaBars, FaTimes } from "react-icons/fa"; // React Icons for the hamburger menu
+import { NavLink, useNavigate } from "react-router-dom";
+
 
 const Navbar = () => {
   const [active, setActive] = useState("");
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // State to control the mobile menu
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate() // State to control the mobile menu
 
   useEffect(() => {
     setActive(window.location.pathname);
@@ -33,10 +36,10 @@ const Navbar = () => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-        <img src="/images/logo.png" alt="GSA Logo" className="w-20 h-20 rounded-full" />
-
+        <img onClick={() => navigate('/')} src="/images/logo.png" alt="GSA Logo" className="w-20 cursor-pointer h-20 rounded-full" />
+       
         {/* Desktop Navbar */}
-        <div className="hidden lg:flex items-center space-x-6">
+        <div className="hidden z-50 lg:flex items-center space-x-6">
           <nav className="flex space-x-6">
             {[
               { path: "/", label: "Home" },
@@ -44,19 +47,20 @@ const Navbar = () => {
               { path: "/team", label: "Our Team" },
               { path: "/programs", label: "Our Programs" },
             ].map(({ path, label }) => (
-              <a
+              <NavLink
                 key={path}
-                href={path}
-                className={`pb-1 transition-colors duration-300 hover:text-gray-300 ${
-                  active === path ? "border-b-2 border-white" : ""
-                }`}
+                to={path}
+                className={`pb-1 transition-colors duration-300 hover:text-gray-300 `}
               >
                 {label}
-              </a>
+              </NavLink>
             ))}
           </nav>
 
-          <button className="bg-orange-400 hover:bg-orange-600 text-white px-6 py-2 rounded-full transition-all">
+          <button  onClick={() => {
+           
+            navigate('/donate')
+          }}  className="bg-orange-400 cursor-pointer hover:bg-orange-600 text-white px-8 py-3 rounded-full transition-all">
             Donate
           </button>
         </div>
@@ -91,22 +95,23 @@ const Navbar = () => {
             { path: "/team", label: "Our Team" },
             { path: "/programs", label: "Our Programs" },
           ].map(({ path, label }) => (
-            <a
+            <NavLink
               key={path}
-              href={path}
-              className={`transition-colors duration-300 hover:text-gray-300 w-max mx-auto text-white ${
-                active === path ? "border-b-2  border-white" : ""
-              }`}
-              onClick={() => setIsMenuOpen(false)} // Close the menu when a link is clicked
+              to={path}
+              className={`transition-colors duration-300 hover:text-gray-300 w-max mx-auto text-white `}
+              onClick={() => setIsMenuOpen(false)} 
             >
               {label}
-            </a>
+            </NavLink>
           ))}
         </nav>
 
         <button
           className="bg-orange-400 hover:bg-orange-600 text-white py-3 px-8 rounded-full transition-all"
-          onClick={() => setIsMenuOpen(false)} // Close the menu when the button is clicked
+          onClick={() => {
+            setIsMenuOpen(false)
+            navigate('/donate')
+          }} // Close the menu when the button is clicked
         >
           Donate
         </button>

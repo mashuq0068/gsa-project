@@ -1,5 +1,10 @@
-import { useState, useEffect } from "react";
-import { MdArrowBackIosNew, MdArrowForwardIos } from "react-icons/md"; // Import new icons
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Thumbs, Autoplay } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/thumbs";
+import { useEffect, useState } from "react";
+import { MdArrowBackIosNew, MdArrowForwardIos } from "react-icons/md";
 
 const Features = () => {
   const images = [
@@ -31,107 +36,96 @@ const Features = () => {
     { id: 16, src: "/images/features/feature16.jpg", description: "" },
     { id: 17, src: "/images/features/feature17.jpg", description: "" },
   ];
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [currentId, setCurrentId] = useState(1);
-  const [visibleThumbnails, setVisibleThumbnails] = useState(
-    images.slice(0, 7)
-  );
 
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // Auto-slide effect
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) =>
         prevIndex === images.length - 1 ? 0 : prevIndex + 1
       );
-      setCurrentId((prevId) => (prevId === images.length - 1 ? 0 : prevId + 1));
     }, 5000);
 
     return () => clearInterval(interval);
   }, [images.length]);
 
-  useEffect(() => {
-    const startIdx = currentIndex;
-    const endIdx = startIdx + 7;
-    const updatedThumbnails = images.slice(startIdx, endIdx);
-    setVisibleThumbnails(
-      updatedThumbnails.length < 7
-        ? [
-            ...updatedThumbnails,
-            ...images.slice(0, 7 - updatedThumbnails.length),
-          ]
-        : updatedThumbnails
-    );
-  }, [currentIndex, images]);
-
-  const handleThumbnailClick = (index, id) => {
-    setCurrentIndex(index);
-    setCurrentId(id);
-  };
+  const [mainSwiper, setMainSwiper] = useState(null);
+  const [thumbsSwiper, setThumbsSwiper] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(0); 
 
   return (
-    <div className="bg-gray-900 lg:px-0  py-20">
+    <div className="bg-gray-900 lg:px-0 px-5 py-20">
       <div className="max-w-5xl mx-auto relative">
-        {/* Main Image with Description */}
-        <div className="relative w-full flex flex-col justify-center items-center">
-          <div className="relative w-full sm:w-[400px] h-[300px] overflow-hidden">
-            <img
-              className="w-full h-full object-cover transition-transform duration-1500 ease-in-out transform"
-              src={images[currentIndex].src}
-              alt={`Slide ${currentIndex + 1}`}
-            />
-          </div>
-          <p className="text-center max-w-[600px] text-white mt-8">
-            {images[currentIndex].description}
-          </p>
-
-          {/* Left Icon */}
-          <div className="absolute left-0 top-1/2 transform -translate-y-1/2 cursor-pointer text-white sm:text-xl md:text-2xl">
-            <MdArrowBackIosNew
-              size={20}
-              onClick={() =>
-                setCurrentIndex(
-                  currentIndex === 0 ? images.length - 1 : currentIndex - 1,
-                  images[currentIndex].id
-                )
-              }
-            />
-          </div>
-
-          {/* Right Icon */}
-          <div className="absolute right-0 top-1/2 transform -translate-y-1/2 cursor-pointer text-white sm:text-xl md:text-2xl">
-            <MdArrowForwardIos
-              size={20}
-              onClick={() =>
-                setCurrentIndex(
-                  currentIndex === images.length - 1 ? 0 : currentIndex + 1
-                )
-              }
-            />
-          </div>
-        </div>
-
-        {/* Thumbnails */}
-        <div className="overflow-x-hidden lg:px-0 px-5 lg:w-max mx-auto mt-8">
-          <div className="flex space-x-4 md:overflow-x-hidden overflow-y-hidden sm:overflow-x-scroll md:space-x-6">
-            {visibleThumbnails.map((image, index) => (
-              <div
-                key={index}
-                className={`w-[60px] h-[45px] sm:w-[80px] sm:h-[60px] object-cover cursor-pointer transition duration-300 transform hover:scale-110 ${
-                  index === currentIndex
-                    ? "border-2 border-white"
-                    : "bg-black/40"
-                }  
-    ${index !== currentIndex ? "opacity-70" : "opacity-100 border-3 border-white"}`}
-                onClick={() => handleThumbnailClick(index)}
-              >
+        {/* Main Swiper Slider */}
+        <Swiper
+          modules={[Navigation, Thumbs, Autoplay]}
+          navigation={{
+            nextEl: ".swiper-button-next",
+            prevEl: ".swiper-button-prev",
+          }}
+          autoplay={{ delay: 5000, disableOnInteraction: false }}
+          loop={true}
+          // controller={{ control: thumbsSwiper }}
+          thumbs={{ swiper: thumbsSwiper }}
+          onSwiper={setMainSwiper}
+          onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
+          className="w-full sm:w-[400px] h-[300px]"
+        >
+          {images.map((image) => (
+            <SwiperSlide key={image.id}>
+              <div className="relative w-full h-full">
                 <img
                   className="w-full h-full object-cover"
                   src={image.src}
-                  alt={`Thumbnail ${index + 1}`}
+                  alt={`Slide ${image.id}`}
                 />
               </div>
-            ))}
-          </div>
+              <p className="text-center max-w-[600px] text-white mt-8">
+                {image.description}
+              </p>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+        <p className="text-center mx-auto max-w-[600px] text-white mt-8">
+  {images[activeIndex]?.description}
+</p>
+
+        {/* Navigation Arrows */}
+        <div className="swiper-button-prev absolute left-0 top-1/2 transform -translate-y-1/2 cursor-pointer text-white sm:text-xl md:text-2xl">
+          <MdArrowBackIosNew className="text-white" size={20} />
         </div>
+        <div className="swiper-button-next absolute right-0 top-1/2 transform -translate-y-1/2 cursor-pointer text-white sm:text-xl md:text-2xl">
+          <MdArrowForwardIos className="text-white" size={20} />
+        </div>
+      </div>
+
+      {/* Thumbnails */}
+      <div className="max-w-3xl mx-auto">
+        <Swiper
+          modules={[Thumbs]}
+          watchSlidesProgress
+          slidesPerView={7}
+          spaceBetween={2}
+          centeredSlides={true}
+          slideToClickedSlide={true}
+          loop={true}
+          onSwiper={setThumbsSwiper}
+          
+          className="mt-4"
+        >
+          {images.map((image , index) => (
+            <SwiperSlide key={image.id} className="cursor-pointer">
+               <img
+               src={image.src}
+                className={`w-[60px] h-[45px] sm:w-[80px] sm:h-[60px] object-cover rounded-md transition ${
+                  activeIndex === index
+                    ? "border-2 border-white brightness-100"
+                    : "border-2 border-transparent brightness-50"
+                }`}/>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
     </div>
   );
